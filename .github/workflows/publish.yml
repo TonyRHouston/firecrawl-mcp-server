@@ -1,39 +1,27 @@
 name: Publish Package
-
 on:
-  release:
-    types: [created]
-  workflow_dispatch:
-
+  workflow_dispatch: {}
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      # NOTE: MCP Registry publishing uses GitHub OIDC and is handled in `.github/workflows/registry.yml`
-      # (which requires `id-token: write`). This workflow publishes to npm using `NPM_TOKEN`.
       contents: read
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22.x'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Publish firecrawl-mcp to NPM
-        run: npm publish --workspace apps/firecrawl-mcp --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish @firecrawl/cli to NPM
-        run: npm publish --workspace apps/firecrawl-cli --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    - uses: actions/checkout@v3
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 22.x
+        registry-url: https://registry.npmjs.org
+    - name: Install dependencies
+      run: npm ci
+    - name: Build
+      run: npm run build
+    - name: Publish firecrawl-mcp to NPM
+      run: npm publish --workspace apps/firecrawl-mcp --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    - name: Publish @firecrawl/cli to NPM
+      run: npm publish --workspace apps/firecrawl-cli --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
